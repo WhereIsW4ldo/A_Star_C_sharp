@@ -32,7 +32,7 @@ namespace A_Star
 
         public void read_input()
         {
-            ReadInput input = new ReadInput();
+            IInput input = new ReadInput();
             grid_size = input.getSizeOfGrid();
 
             grid = new Node[grid_size, grid_size];
@@ -50,11 +50,10 @@ namespace A_Star
             }
             v = new Visual();
 
-            grid[5, 4].state = 'w';
-            grid[5, 5].state = 'w';
-            grid[5, 6].state = 'w';
-            grid[5, 7].state = 'w';
-            grid[5, 8].state = 'w';
+            foreach (Tuple<int, int> wall in input.getWalls(grid_size))
+            {
+                grid[wall.Item1, wall.Item2].state = 'w';
+            }
 
             grid[start_x, start_y].state = 's';
             grid[end_x, end_y].state = 'e';
@@ -70,12 +69,12 @@ namespace A_Star
             v.show(grid);
         }
 
-        private List<Tuple<int, int>> get_adjacent(int r, int c)
+        public static List<Tuple<int, int>> get_adjacent(int r, int c, int grid_size)
         {
             List<Tuple<int, int>> adjacents = new List<Tuple<int, int>>();
 
             // node not on top row
-            if (r > 1)
+            if (r > 0)
                 adjacents.Add(Tuple.Create(r - 1, c));
 
             // node not on bottom row
@@ -83,7 +82,7 @@ namespace A_Star
                 adjacents.Add(Tuple.Create(r + 1, c));
 
             // node not on left column
-            if (c > 1)
+            if (c > 0)
                 adjacents.Add(Tuple.Create(r, c - 1));
 
             // node not on right column
@@ -91,12 +90,11 @@ namespace A_Star
                 adjacents.Add(Tuple.Create(r, c + 1));
 
             // dia left down
-            if (c > 1 && r < grid_size - 1)
-
+            if (c > 0 && r < grid_size - 1)
                 adjacents.Add(Tuple.Create(r + 1, c - 1));
 
             // dia left up
-            if (c > 1 && r > 1)
+            if (c > 0 && r > 0)
                 adjacents.Add(Tuple.Create(r - 1, c - 1));
 
             // dia right down
@@ -104,7 +102,7 @@ namespace A_Star
                 adjacents.Add(Tuple.Create(r + 1, c + 1));
 
             // dia right up
-            if (c < grid_size - 1 && r > 1)
+            if (c < grid_size - 1 && r > 0)
                 adjacents.Add(Tuple.Create(r - 1, c + 1));
 
 
@@ -164,7 +162,7 @@ namespace A_Star
                 current_node.state = 'c';
 
                 // get adjacent nodes and set parents to current node
-                List<Tuple<int, int>> adjacents = get_adjacent(row, col);
+                List<Tuple<int, int>> adjacents = get_adjacent(row, col, grid_size);
 
                 foreach (Tuple<int, int> adjacent in adjacents)
                 {

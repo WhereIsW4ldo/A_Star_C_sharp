@@ -1,6 +1,8 @@
-﻿namespace A_Star
+﻿using System.Net;
+
+namespace A_Star
 {
-    internal class ReadInput
+    internal class ReadInput: IInput
     {
 
         public ReadInput()
@@ -81,6 +83,58 @@
                         return (x, y);
                 }
             }
+        }
+
+        public List<Tuple<int, int>> getWalls(int size_grid)
+        {
+            Console.WriteLine("Please give amount of walls to be placed: ");
+            string len = Console.ReadLine();
+            int l = int.Parse(len);
+
+            List<Tuple<int, int>> walls = new List<Tuple<int, int>>();
+
+            int x = -1, y = -1;
+            while (walls.Count <= l)
+            {
+                string input_x = null, input_y = null;
+                Console.WriteLine("Wall " + walls.Count + " position: ");
+
+                if (x == -1)
+                {
+                    Console.Write("x: ");
+                    input_x = Console.ReadLine();
+                }
+                if (y == -1)
+                {
+                    Console.Write("y: ");
+                    input_y = Console.ReadLine();
+                }
+                if (input_x != null)
+                {
+                    try
+                    {
+                        var temp = Convert.ToInt32(input_x);
+                        if (temp >= 0 && temp < size_grid) x = temp;
+                    }
+                    catch { }
+                }
+                if (input_y != null)
+                {
+                    try
+                    {
+                        var temp = Convert.ToInt32(input_y);
+                        if (temp >= 0 && temp < size_grid) y = temp;
+                    }
+                    catch { }
+                }
+                if (x >= 0 && y >= 0)
+                {
+                    walls.Add(Tuple.Create(x, y));
+                    x = -1;
+                    y = -1;
+                }
+            }
+            return walls;
         }
     }
 }
